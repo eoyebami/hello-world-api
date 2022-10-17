@@ -13,15 +13,15 @@ phases:
             - echo Build started on 'date'
             - echo Building the Docker images ...
             - docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) $REPOSITORY_URI
-            - docker build -t hello-world-api .
-            - docker tag hello-world-api:latest $REPOSITORY_URI/hello-world-api:latest
+            - docker build -t hello-world-images .
+            - docker tag hello-world-images:latest $REPOSITORY_URI/hello-world-images:latest
     post_build:
         commands:
             - echo Build completed on 'date'
             - echo Pushing Docker images...
-            - docker push $REPOSITORY_URI/hello-world-api:latest
+            - docker push $REPOSITORY_URI/hello-world-images:latest
             - echo Writing image definitions file ...
-            - printf '[{"name":"hello-world","imageUri":"%s"}]' $REPOSITORY_URI/hello-world-api:latest > imagedefinitions.json
+            - printf '[{"name":"hello-world","imageUri":"%s"}]' $REPOSITORY_URI/hello-world-images:latest > imagedefinitions.json
             - cat imagedefinitions.json
 artifacts:
     files: imagedefinitions.json
