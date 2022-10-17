@@ -1,0 +1,27 @@
+version: 0.2
+
+
+phases:
+    pre_build:
+        commands:
+            - echo Setting Variables ...
+            - aws --version
+            - REPOSITORY_URI=738921266859.dkr.ecr.us-east-1.amazonaws.com
+            - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
+    build:
+        commands:
+            - echo Build started on 'date'
+            - echo Building the Docker images ...
+            - docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) $REPOSITORY_URI
+            - docker build -t hello-world-api .
+            - docker tag hello-world-api:latest $REPOSITORY_URI/hello-world-api:latest
+    post_build:
+        commands:
+            - echo Build completed on 'date'
+            - echo Pushing Docker images...
+            - docker push $REPOSITORY_URI/hello-world-api:latest
+            - echo Writing image definitions file ...
+            - printf '[{"name":"hello-world","imageUri":"%s"}]' $REPOSITORY_URI/hello-world-api:latest > imagedefinitions.json
+            - cat imagedefinitions.json
+artifacts:
+    files: imagedefinitions.json
