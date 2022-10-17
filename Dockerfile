@@ -3,7 +3,7 @@ FROM node:16
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-COPY /hello-world/.
+COPY hello-world/.
 
 RUN npm install
 
