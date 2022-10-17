@@ -5,6 +5,7 @@ resource "aws_ecr_repository" "hello-world-images" {
   image_scanning_configuration {
     scan_on_push = false
   }
+  force_delete = true
 }
 
 resource "aws_ecs_cluster" "hello-world-cluster" {
@@ -57,6 +58,11 @@ TASK_DEFINITION
     operating_system_family = "LINUX"
     cpu_architecture        = "X86_64"
   }
+  depends_on = [
+    aws_ecr_repository.hello-world-images,
+    aws_ecs_cluster.hello-world-cluster,
+    aws_ecs_cluster_capacity_providers.example
+  ]
 }
 
 resource "aws_ecs_service" "hello-api-service" {
@@ -79,4 +85,8 @@ resource "aws_ecs_service" "hello-api-service" {
     enable = true
     rollback = true
   }
+  depends_on = [
+    aws_ecs_task_definition.hello-world-api,
+    aws_lb.hello-world-alb
+  ]
 }

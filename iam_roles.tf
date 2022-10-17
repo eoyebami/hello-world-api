@@ -40,10 +40,17 @@ resource "aws_iam_role" "ecsTaskRole" {
 resource "aws_iam_role_policy_attachment" "test-attach" {
   role       = aws_iam_role.ecsTaskRole.id
   policy_arn = aws_iam_policy.ecsTask_policy.arn
+  depends_on = [
+    aws_iam_role.ecsTaskRole,
+    aws_iam_policy.ecsTask_policy
+  ]
 }
 resource "aws_iam_role_policy_attachment" "test-attach_1" {
     policy_arn  = "arn:aws:iam::aws:policy/PowerUserAccess"
     role        = aws_iam_role.ecsTaskRole.id
+    depends_on = [
+      aws_iam_role.ecsTaskRole
+    ]
 }
 
 #------------------------------------------------------------------#
@@ -86,7 +93,8 @@ resource "aws_iam_role_policy_attachment" "test-attach_2" {
     policy_arn  = aws_iam_policy.CodeBuildTask_policy.arn
     role        = aws_iam_role.CodeBuildTaskRole.id
     depends_on = [
-      aws_iam_policy.CodeBuildTask_policy
+      aws_iam_policy.CodeBuildTask_policy,
+      aws_iam_role.CodeBuildTaskRole
     ]
 }
 
@@ -143,9 +151,18 @@ resource "aws_iam_policy" "codepipeline_policy" {
 resource "aws_iam_role_policy_attachment" "test-attach_4" {
   role       = aws_iam_role.codepipeline_role.id
   policy_arn = aws_iam_policy.codepipeline_policy.arn
+
+  depends_on = [
+    aws_iam_role.codepipeline_role,
+    aws_iam_policy.codepipeline_policy
+  ]
 }
 
 resource "aws_iam_role_policy_attachment" "test-attach_5" {
     policy_arn  = "arn:aws:iam::aws:policy/AWSCodePipeline_FullAccess"
     role        = aws_iam_role.codepipeline_role.id
+
+    depends_on = [
+      aws_iam_role.codepipeline_role
+    ]
 }

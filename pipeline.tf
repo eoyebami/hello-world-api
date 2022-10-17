@@ -45,6 +45,9 @@ resource "aws_codebuild_project" "Docker-build-hello-api" {
   tags = {
     Environment = "Test"
   }
+  depends_on = [
+    aws_iam_role.CodeBuildTaskRole
+  ]
 }
 
 
@@ -114,10 +117,15 @@ resource "aws_codepipeline" "codepipeline" {
       }
     }
   }
+  depends_on = [
+    aws_iam_role.codepipeline_role,
+    aws_s3_bucket.eoyebami_bucket_api
+  ]
 }
 
 resource "aws_s3_bucket" "eoyebami_bucket_api" {
   bucket = "eoyebami-bucket-api"
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_acl" "codepipeline_bucket_acl" {
