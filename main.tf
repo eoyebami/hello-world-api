@@ -178,5 +178,9 @@ resource "aws_ecs_service" "hello-api-service" {
     container_name   = "hello-world"
     container_port   = 8888
   }
+  deployment_circuit_breaker {
+    enable = true
+    rollback = true
+  }
 }
 
